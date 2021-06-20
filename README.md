@@ -253,12 +253,12 @@ First we create our storage account. We use the following command:
 
 ```
 STORAGE_ACCT_NAME=neighborly4pp5torage
-RESOURCE_GROUP_NAME=neighborly-app-rg
+RESOURCE_GROUP=neighborly-app-rg
 REGION=westeurope
 
 az storage account create \
  --name $STORAGE_ACCT_NAME \
- --resource-group $RESOURCE_GROUP_NAME \
+ --resource-group $RESOURCE_GROUP \
  --location $REGION
 ```
 
@@ -268,16 +268,149 @@ az storage account create \
 # must be a unique, you can obtain these in the Azure Portal
 STORAGE_ACCT_NAME=neighborly4pp5torage
 FUNCTION_APP_NAME=neighborly-function-app
-RESOURCE_GROUP_NAME=neighborly-app-rg
+RESOURCE_GROUP=neighborly-app-rg
 REGION=westeurope
 
 # Create Your Function App
 az functionapp create \
     --name $FUNCTION_APP_NAME \
     --storage-account $STORAGE_ACCT_NAME \
-    --resource-group $RESOURCE_GROUP_NAME \
+    --resource-group $RESOURCE_GROUP \
     --os-type Linux \
     --consumption-plan-location $REGION \
     --runtime python
 ```
 
+### Deploying with Azure CLI
+
+The command for deploying your functions in Azure CLI is:
+
+```
+func azure functionapp publish $FUNCTION_APP_NAME --python
+```
+
+If Azure cannot find your function, make sure you are in the correctly directory and that your local.settings.json is current.
+
+### `local.settings.json` Example
+
+```
+{
+  "IsEncrypted": false,
+  "Values": {
+    "FUNCTIONS_WORKER_RUNTIME": "python",
+    "FUNCTIONS_EXTENSION_VERSION": "~2",
+    "APPINSIGHTS_INSTRUMENTATIONKEY": "d7727476-2b49-4c40-a87c-1a3754dd42f5",
+    "AzureWebJobsStorage": "DefaultEndpointsProtocol=https;EndpointSuffix=core.windows.net;AccountName=5t0r3g3funct10nd3m0;AccountKey=DjPlwoDIHcm/JHuJSzw2uYTCUq+lb/csn3rAv6NFXYpe4/XDawmx2H8WBOpBANDNukJKLQPSHuu17XRSZYmYQg==",
+    "MyMongoDBConnectionString": "mongodb://cosmos4ccount4function4pp:WkNM8RGAq17tUIkUpGaEy77XbqeDsv1v9dk8AE6LS1Gqa7maXQv8xzWajgQwdesIJc6BhK67LmsCqePvLHnSoA==@cosmos4ccount4function4pp.mongo.cosmos.azure.com:10255/?ssl=true&replicaSet=globaldb&retrywrites=false&maxIdleTimeMS=120000&appName=@cosmos4ccount4function4pp@",
+    "SendGridAPI": "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",
+  }
+}
+```
+
+### how to sync local.setting.json in VS and Azure
+
+You can sync settings between local and Azure with Func CLI:
+
+```
+func azure functionapp fetch-app-settings $FUNCTION_APP_NAME # to copy from Azure to local
+func azure functionapp publish $FUNCTION_APP_NAME --publish-settings-only # to copy from local to Azure
+```
+
+### Resource
+
+[Create a Python function in Azure from the command line](https://docs.microsoft.com/en-us/azure/azure-functions/create-first-function-cli-python?tabs=azure-cli%2Cbash%2Cbrowser)
+
+### Set up a Cosmos DB Account
+
+#### 1. Create a new CosmosDB account.
+
+```
+# This is the new account here
+COSMOSDB_ACCT=neighborly0cosmos4cct
+
+az cosmosdb create -n $COSMOSDB_ACCT -g $RESOURCE_GROUP  \
+    --locations regionName=$REGION failoverPriority=0 isZoneRedundant=False \
+    --kind "MongoDB"
+```
+
+Note: It may take a while for the CosmosDB account to be created, sometimes on the order of 10-20 minutes.
+
+#### 2. Creating a new MongoDB database with a sample collection
+
+```
+DB_NAME=neighborly-db
+CREATE_LEASE_COLLECTION=0     # yes,no=(1,0)
+
+# Get your CosmosDB key and save as a variable
+COSMOSDB_KEY=$(az cosmosdb keys list --name $COSMOSDB_ACCT --resource-group $RESOURCE_GROUP --output tsv |awk '{print $1}')
+
+az cosmosdb database create \
+    --name $COSMOSDB_ACCT \
+    --db-name $DB_NAME \
+    --key $COSMOSDB_KEY \
+    --resource-group $RESOURCE_GROUP
+    
+SAMPLE_COLLECTION_ADS=advertisements
+SAMPLE_COLLECTION_POSTS=posts
+
+# Create a container with a partition key and provision 400 RU/s throughput.
+az cosmosdb mongodb collection create \
+    --resource-group $RESOURCE_GROUP \
+    --name $SAMPLE_COLLECTION_ADS \
+    --account-name $COSMOSDB_ACCT \
+    --database-name $DB_NAME \
+    --throughput 400
+
+az cosmosdb mongodb collection create \
+    --resource-group $RESOURCE_GROUP \
+    --name $SAMPLE_COLLECTION_POSTS \
+    --account-name $COSMOSDB_ACCT \
+    --database-name $DB_NAME \
+    --throughput 400
+```
+
+#### 3. Listing connection strings from COSMOS_ACCOUNT:
+
+```
+az cosmosdb keys list -n $COSMOSDB_ACCT -g $RESOURCE_GROUP --type connection-strings
+```
+
+#### 4. Import Sample Data Into MongoDB.
+
+Download dependencies:
+
+```
+# get the mongodb library
+brew install mongodb-community@4.2
+
+# check if mongoimport lib exists
+mongoimport --version
+```
+
+#### 5. Import the data from the sample_data directory for Ads and Posts to initially fill your app.
+
+```
+# This information is viewable in your portal >> Azure Cosmos DB >> Select the DB name >> Settings >> Connection String >>
+# replace the host, port, username, and primary password with your own
+
+MONGODB_HOST=neighborly0cosmos4cct.mongo.cosmos.azure.com
+MONGODB_PORT=10255
+USER=neighborly0cosmos4cct
+
+# Copy/past the primary password here
+PRIMARY_PW=0CqJu57Vwe18E4gC7IX8TLCT2enJ4olAnaeqjhzRFyAgHdra0xUnOvGz3r1IbwVRq0M4q8Ye8UNLirOxCybaZw==
+
+FILE_DIR_ADS=../sample_data/sampleAds.json
+FILE_DIR_POSTS=../sample_data/samplePosts.json
+
+#Import command for Linux and Mac OS
+
+mongoimport -h $MONGODB_HOST:$MONGODB_PORT \
+-d $DB_NAME -c $SAMPLE_COLLECTION_ADS -u $USER -p $PRIMARY_PW \
+--ssl  --jsonArray  --file $FILE_DIR_ADS --writeConcern "{w:0}"
+
+mongoimport -h $MONGODB_HOST:$MONGODB_PORT \
+-d $DB_NAME -c $SAMPLE_COLLECTION_POSTS -u $USER -p $PRIMARY_PW \
+--ssl  --jsonArray  --file $FILE_DIR_ADS --writeConcern "{w:0}"
+
+```
