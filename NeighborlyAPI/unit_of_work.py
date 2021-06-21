@@ -17,28 +17,26 @@ class MongoUnitOfWork:
     def get_all(self, collection_name):
         collection = self.db[collection_name]
         result = collection.find({})
-
         return result
 
     def get_one(self, collection_name, id):
         collection = self.db[collection_name]
-        # query = {'_id': ObjectId(id)}
-        query = {"_id": id}
+        query = {"_id": ObjectId(id)}
+        # query = {"_id": id}
         result = collection.find_one(query)
-
         return result
 
     def delete_by_id(self, collection_name, id):
         collection = self.db[collection_name]
         query = {"_id": ObjectId(id)}
+        # query = {"_id": id}
         result = collection.delete_one(query)
-
         return result
 
     def update_by_id(self, collection_name, id, request):
         collection = self.db[collection_name]
-        # filter_query = {'_id': ObjectId(id)}
-        filter_query = {"_id": id}
+        filter_query = {"_id": ObjectId(id)}
+        # filter_query = {"_id": id}
         update_query = {"$set": request}
         rec_id1 = collection.update_one(filter_query, update_query)
         return rec_id1

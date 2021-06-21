@@ -414,3 +414,6 @@ mongoimport -h $MONGODB_HOST:$MONGODB_PORT \
 --ssl  --jsonArray  --file $FILE_DIR_ADS --writeConcern "{w:0}"
 
 ```
+
+### Deploy your client app.
+

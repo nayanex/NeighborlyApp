@@ -1,6 +1,5 @@
 import azure.functions as func
 from bson.json_util import dumps
-from bson.objectid import ObjectId
 
 import unit_of_work
 

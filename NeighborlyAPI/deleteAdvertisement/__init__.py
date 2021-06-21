@@ -1,5 +1,4 @@
 import azure.functions as func
-from bson.objectid import ObjectId
 
 import unit_of_work
 
