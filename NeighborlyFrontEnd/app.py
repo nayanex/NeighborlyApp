@@ -1,12 +1,10 @@
 import json
-import logging.config
-import os
 from urllib.parse import urljoin
 
 import requests
 from feedgen.feed import FeedGenerator
-from flask import (Blueprint, Flask, jsonify, make_response, redirect,
-                   render_template, request, url_for)
+from flask import (Flask, make_response, redirect, render_template, request,
+                   url_for)
 from flask_bootstrap import Bootstrap
 from werkzeug.contrib.atom import AtomFeed
 
@@ -48,7 +46,7 @@ def rss():
     fg = FeedGenerator()
     fg.title("Feed title")
     fg.description("Feed Description")
-    fg.link(href="https://neighborly-client-v1.azurewebsites.net/")
+    fg.link(href=settings.API_URL)
 
     response = requests.get(settings.API_URL + "/getAdvertisements")
     ads = response.json()
@@ -110,8 +108,9 @@ def add_ad_request():
         "imgUrl": request.form["imgUrl"],
         "price": request.form["price"],
     }
+
     response = requests.post(
-        settings.API_URL + "/createAdvertisement", json=json.dumps(req_data)
+        settings.API_URL + "/createAdvertisement", json.dumps(req_data)
     )
     return redirect(url_for("home"))
 
@@ -128,7 +127,7 @@ def update_ad_request(id):
         "price": request.form["price"],
     }
     response = requests.put(
-        settings.API_URL + "/updateAdvertisement?id=" + id, json=json.dumps(req_data)
+        settings.API_URL + "/updateAdvertisement?id=" + id, json.dumps(req_data)
     )
     return redirect(url_for("home"))
 

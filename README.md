@@ -251,6 +251,8 @@ If you could not retrieve your `local.settings.json`, but still have the createA
 
 First we create our storage account. We use the following command:
 
+### Part 1 - Azure Function App
+
 ```
 STORAGE_ACCT_NAME=neighborly4pp5torage
 RESOURCE_GROUP=neighborly-app-rg
@@ -284,6 +286,10 @@ az functionapp create \
 ### Deploying with Azure CLI
 
 The command for deploying your functions in Azure CLI is:
+
+Make sure you also install:
+
+`pipenv install azure-cli-core`
 
 ```
 func azure functionapp publish $FUNCTION_APP_NAME --python
@@ -415,5 +421,42 @@ mongoimport -h $MONGODB_HOST:$MONGODB_PORT \
 
 ```
 
-### Deploy your client app.
+### Part2 - Deploy your client app.
+
+Install the following dependencies not described at `requirements.txt`
+
+```
+pipenv install feedgen
+```
+
+Also make sure `Werkzeug<1.0` because `werkzeug.contrib.atom` is deprecated in recent versions of `Werkzeug`
+
+Also the code does not use `dominate`, `visitor`, `azure-functions`, `flask-restplus` and `flask_swagger_ui` for anything. You could remove  them.
+
+You can deploy the client-side Flask app with:
+
+```
+APP_NAME=neighborly-webapp
+RESOURCE_GROUP=neighborly-app-rg
+REGION=westeurope
+
+az webapp up \
+ --resource-group $RESOURCE_GROUP \
+ --name $APP_NAME \
+ --sku F1 \
+ --location $REGION\
+ --verbose
+```
+
+After running this command once, a configuration file will be created that will store any arguments you gave the previous time, so you can run just `az webapp up` and it will re-use arguments. Note that certain updates, such as changes to requirements.txt files, won't be appropriately pushed just by using `az webapp up`, so you may need to use az webapp update or just delete the app and re-deploy.
+
+```
+az webapp up \
+ --name $APP_NAME \
+ --verbose 
+```
+
+Once deployed, the flask app will be available at the URL `http://<APP_NAME>.azurewebsites.net/` - meaning the app name you use must be unique.
+
+### Part 3: CI/CD Deployment
 

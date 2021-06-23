@@ -137,3 +137,6 @@ local.settings.json
 
 #IntelliJ or PyCharm
 .idea/
+
+# Azure App Service artifacts
+.azure
