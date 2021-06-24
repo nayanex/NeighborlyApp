@@ -460,3 +460,119 @@ Once deployed, the flask app will be available at the URL `http://<APP_NAME>.azu
 
 ### Part 3: CI/CD Deployment
 
+1. Create an Azure Registry 
+2. Dockerize your Azure Functions
+
+#### Deploying a function app to Kubernetes
+
+> You can deploy any function app to a Kubernetes cluster running KEDA. Since your functions run in a Docker container, your project needs a Dockerfile. If it doesn't already have one, you can add a Dockerfile by running the following command at the root of your Functions project:
+
+`func init --docker-only`
+
+> The Core Tools will leverage the docker CLI to build and publish the image. Be sure to have docker installed already and connected to your account with docker login.
+
+```
+REGISTRY=neighborlyRegistry
+docker login $REGISTRY
+```
+
+> To create an image from Docker file use the below commands, in which we also tag our image
+
+```
+TAG=neighborlyregistry.azurecr.io/neighborly-api:v1
+docker build -t $TAG .
+
+# List your images with:
+docker images
+```
+
+3. push the container to the Azure Container Registry
+
+```
+REGISTRY_SERVER=neighborlyregistry.azurecr.io
+
+az acr login --name $REGISTRY_SERVER
+docker push <your-registry-name>.azurecr.io/<your-image-name>
+
+# other useful commands
+az acr show --name $REGISTRY --query loginServer --output table
+az acr repository list --name $REGISTRY_SERVER --output table
+```
+
+4. Create a Kubernetes cluster, and verify your connection to it with `kubectl get nodes`
+
+> Install kubectl in MacOS
+
+* Run the installation command: `brew install kubectl orbrew install kubernetes-cli`
+* Test to ensure the version you installed is up-to-date: `kubectl version --client`
+
+> Create AKS Cluster. Note: Kubernetes name must match ^[a-z0-9\-\.]*$.
+
+```
+RESOURCE_GROUP=neighborly-app-rg
+AKS_CLUSTER=neighborly-aks-cluster
+
+az aks create --resource-group $RESOURCE_GROUP --name $AKS_CLUSTER --node-count 2 --enable-addons monitoring --generate-ssh-keys
+
+# Merge "neighborly-aks-cluster" as current context in /Users/<username>/.kube/config
+az aks get-credentials --name $AKS_CLUSTER --resource-group $RESOURCE_GROUP
+
+#verify your connection to it with:
+kubectl get nodes
+```
+
+5. Deploy app to Kubernetes, and check your deployment with `kubectl config get-contexts`.
+
+> To run Functions on your Kubernetes cluster, you must install the KEDA component. You can install this component using Azure Functions Core Tools.
+```
+func kubernetes install --namespace keda
+```
+
+```
+RESOURCE_GROUP=neighborly-app-rg
+AKS_CLUSTER=neighborly-aks-cluster
+IMAGE_NAME=neighborlyregistry.azurecr.io/neighborly-api:v1
+REGISTRY=neighborlyRegistry
+
+# Update a managed Kubernetes cluster. Where --attach-acr grants the 'acrpull' role assignment to the ACR specified by name or resource ID. It might take up to 10 minutes or more for it to work. be patient.
+az aks update -n $AKS_CLUSTER -g $RESOURCE_GROUP --attach-acr $REGISTRY 
+
+func kubernetes deploy --name $AKS_CLUSTER \
+--image-name $IMAGE_NAME \
+-—polling-interval 3 —cooldown-period 5
+```
+
+> Troubleshooting deployment errors
+
+```
+https://knowledge.udacity.com/questions/546910
+
+REGISTRY_SERVER=neighborlyregistry.azurecr.io
+
+az aks check-acr -n $AKS_CLUSTER -g $RESOURCE_GROUP \
+--acr $REGISTRY_SERVER
+
+```
+
+
+#### These are other useful docker commands:
+
+```
+# Remove <none> images: 
+rmi $(docker images -f "dangling=true" -q)
+
+# List containers:
+docker container ls [OPTIONS]
+
+# [docker stop]: Stop one or more running containers
+docker stop [OPTIONS] CONTAINER [CONTAINER...]
+
+# [docker rm]: Remove one or more containers
+docker rm [OPTIONS] CONTAINER [CONTAINER...]
+
+# [docker image rm]: Remove one or more images
+docker image rm [OPTIONS] IMAGE [IMAGE...]
+
+# Test an image in your local machine
+docker run -p 8080:80 -it $IMAGE_NAME
+```
