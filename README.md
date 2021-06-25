@@ -576,3 +576,80 @@ docker image rm [OPTIONS] IMAGE [IMAGE...]
 # Test an image in your local machine
 docker run -p 8080:80 -it $IMAGE_NAME
 ```
+
+### Part 4: Event Hubs and Logic App
+
+[Azure Event Hubs trigger for Azure](https://docs.microsoft.com/en-us/azure/azure-functions/functions-bindings-event-hubs-trigger?tabs=python)
+
+
+
+1. Create a Logic App that watches for an HTTP trigger. When the HTTP request is triggered, send yourself an email notification.
+2. Create a namespace for event hub in the portal. You should be able to obtain the namespace URL.
+
+[create-an-event-hubs-namespace](https://docs.microsoft.com/en-us/azure/event-hubs/event-hubs-create#create-an-event-hubs-namespace)
+
+3. Add the connection string of the event hub to the Azure Function.
+
+```json
+{
+  "scriptFile": "__init__.py",
+  "bindings": [
+    {
+      "type": "eventHubTrigger",
+      "name": "event",
+      "direction": "in",
+      "eventHubName": "neighborly-event-hub",
+      "connection": "Endpoint=sb://neighborly-event-hub.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=nDQNaiaESK4QH1Z1mp4sUiB9uq09stF3GM67qsk3fhk="
+    }
+  ]
+}
+```
+
+#### Getting the connection string with Azure CLI
+
+```
+TOPICNAME=neighborly-topic
+RESOURCE_GROUP=neighborly-app-rg
+EVENT_HUBS_NAMESPACE=neighborly-event-hub
+
+az eventhubs namespace authorization-rule keys list --resource-group $RESOURCE_GROUP --namespace-name $EVENT_HUBS_NAMESPACE --name RootManageSharedAccessKey
+
+az eventhubs eventhub authorization-rule keys list --resource-group $RESOURCE_GROUP --namespace-name $EVENT_HUBS_NAMESPACE --eventhub-name $EVENT_HUBS_NAMESPACE --name RootManageSharedAccessKey
+```
+### Send an event to your custom topic
+
+Let's trigger an event to see how Event Grid distributes the message to your endpoint. First, let's get the URL and key for the custom topic.
+
+```
+TOPICNAME=neighborly-topic
+RESOURCE_GROUP=neighborly-app-rg
+
+ENDPOINT=$(az eventgrid topic show --name $TOPICNAME -g $RESOURCE_GROUP --query "endpoint" --output tsv)
+
+KEY=$(az eventgrid topic key list --name $TOPICNAME -g $RESOURCE_GROUP --query "key1" --output tsv)
+```
+
+
+To use an SAS token for authorization in Postman, configure authorization as follows:
+
+Type: API Key
+Key: Authorization
+Value: SharedAccessSignature ...
+Add to: Header
+
+### What is the difference between event hub and event grid?
+
+The noticeable difference between them is that **Event Hubs** are accepting only endpoints for the ingestion of data and they don't provide a mechanism for sending data back to publishers. On the other hand, **Event Grid** sends HTTP requests to notify events that happen in publishers. 
+
+https://medium.com/@sreeramg/what-is-microsoft-azure-event-hubs-1ec100452067
+
+https://dev.to/alexomeyer/10-must-have-vs-code-extensions-to-improve-your-productivity-4goe
+
+
+
+https://docs.microsoft.com/en-us/dotnet/api/microsoft.servicebus.messaging.eventdata?view=azure-dotnet
+
+
+https://docs.microsoft.com/en-us/azure/azure-functions/functions-bindings-event-hubs
+https://docs.microsoft.com/en-us/azure/azure-functions/functions-bindings-event-hubs-output
+https://docs.microsoft.com/en-us/azure/azure-functions/functions-reliable-event-processing
