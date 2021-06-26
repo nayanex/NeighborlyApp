@@ -245,9 +245,7 @@ az group delete --name $RESOURCE_GROUP
 
 ## Steps I Took
 
-The code provided to us initially does not contain `local.settings.json`, so we are not able to deploy the our functions using Azure CLI yet.
-
-If you could not retrieve your `local.settings.json`, but still have the createAdvertisement deleteAdvertisement code and so on, you can create a fresh Azure Function app. You can run the following shell script to create a new Function App.
+If you could not retrieve your `local.settings.json`, but still have the createAdvertisement deleteAdvertisement code and so on, you can create a fresh Azure Function app. You can run the following shell scripts to create a new Function App.
 
 First we create our storage account. We use the following command:
 
@@ -295,23 +293,8 @@ Make sure you also install:
 func azure functionapp publish $FUNCTION_APP_NAME --python
 ```
 
-If Azure cannot find your function, make sure you are in the correctly directory and that your local.settings.json is current.
+If Azure cannot find your function, make sure you are in the correctly directory and that your `local.settings.json` is current.
 
-### `local.settings.json` Example
-
-```
-{
-  "IsEncrypted": false,
-  "Values": {
-    "FUNCTIONS_WORKER_RUNTIME": "python",
-    "FUNCTIONS_EXTENSION_VERSION": "~2",
-    "APPINSIGHTS_INSTRUMENTATIONKEY": "d7727476-2b49-4c40-a87c-1a3754dd42f5",
-    "AzureWebJobsStorage": "DefaultEndpointsProtocol=https;EndpointSuffix=core.windows.net;AccountName=5t0r3g3funct10nd3m0;AccountKey=DjPlwoDIHcm/JHuJSzw2uYTCUq+lb/csn3rAv6NFXYpe4/XDawmx2H8WBOpBANDNukJKLQPSHuu17XRSZYmYQg==",
-    "MyMongoDBConnectionString": "mongodb://cosmos4ccount4function4pp:WkNM8RGAq17tUIkUpGaEy77XbqeDsv1v9dk8AE6LS1Gqa7maXQv8xzWajgQwdesIJc6BhK67LmsCqePvLHnSoA==@cosmos4ccount4function4pp.mongo.cosmos.azure.com:10255/?ssl=true&replicaSet=globaldb&retrywrites=false&maxIdleTimeMS=120000&appName=@cosmos4ccount4function4pp@",
-    "SendGridAPI": "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",
-  }
-}
-```
 
 ### how to sync local.setting.json in VS and Azure
 
@@ -423,15 +406,9 @@ mongoimport -h $MONGODB_HOST:$MONGODB_PORT \
 
 ### Part2 - Deploy your client app.
 
-Install the following dependencies not described at `requirements.txt`
+Make sure `Werkzeug<1.0` because `werkzeug.contrib.atom` is deprecated in recent versions of `Werkzeug`
 
-```
-pipenv install feedgen
-```
-
-Also make sure `Werkzeug<1.0` because `werkzeug.contrib.atom` is deprecated in recent versions of `Werkzeug`
-
-Also the code does not use `dominate`, `visitor`, `azure-functions`, `flask-restplus` and `flask_swagger_ui` for anything. You could remove  them.
+Also the code does not use `dominate`, `visitor`, `azure-functions`, `flask-restplus` and `flask_swagger_ui` for anything. You can remove  them.
 
 You can deploy the client-side Flask app with:
 
@@ -554,7 +531,6 @@ az aks check-acr -n $AKS_CLUSTER -g $RESOURCE_GROUP \
 
 ```
 
-
 #### These are other useful docker commands:
 
 ```
@@ -582,8 +558,10 @@ docker run -p 8080:80 -it $IMAGE_NAME
 [Azure Event Hubs trigger for Azure](https://docs.microsoft.com/en-us/azure/azure-functions/functions-bindings-event-hubs-trigger?tabs=python)
 
 
-
 1. Create a Logic App that watches for an HTTP trigger. When the HTTP request is triggered, send yourself an email notification.
+
+https://docs.microsoft.com/en-us/azure/connectors/connectors-create-api-smtp
+
 2. Create a namespace for event hub in the portal. You should be able to obtain the namespace URL.
 
 [create-an-event-hubs-namespace](https://docs.microsoft.com/en-us/azure/event-hubs/event-hubs-create#create-an-event-hubs-namespace)
@@ -598,58 +576,175 @@ docker run -p 8080:80 -it $IMAGE_NAME
       "type": "eventHubTrigger",
       "name": "event",
       "direction": "in",
-      "eventHubName": "neighborly-event-hub",
-      "connection": "Endpoint=sb://neighborly-event-hub.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=nDQNaiaESK4QH1Z1mp4sUiB9uq09stF3GM67qsk3fhk="
+      "eventHubName": "neighborly-hub",
+      "connection": "EventHubConnString"
     }
   ]
 }
 ```
 
-#### Getting the connection string with Azure CLI
+Your `local.settings.json` should look like this:
+
+```json
+{
+  "IsEncrypted": false,
+  "Values": {
+    "FUNCTIONS_WORKER_RUNTIME": "python",
+    "FUNCTIONS_EXTENSION_VERSION": "~2",
+    "AzureWebJobsStorage": "DefaultEndpointsProtocol=https;EndpointSuffix=core.windows.net;AccountName=neighborly4pp5torage;AccountKey=IuzsjtsibcwXzMnymoEy220fdht7FE/WALywgxATBQ8il044ft9eZhnEele6bkRaPe0wB7j+TMTSsHq082BLKw==",
+    "APPINSIGHTS_INSTRUMENTATIONKEY": "be45bd8a-c876-461f-911a-0d3b05546f6d",
+    "MongoDBConnString": "mongodb://neighborly0cosmos4cct:0CqJu57Vwe18E4gC7IX8TLCT2enJ4olAnaeqjhzRFyAgHdra0xUnOvGz3r1IbwVRq0M4q8Ye8UNLirOxCybaZw==@neighborly0cosmos4cct.mongo.cosmos.azure.com:10255/?ssl=true&replicaSet=globaldb&retrywrites=false&maxIdleTimeMS=120000&appName=@neighborly0cosmos4cct@",
+    "MongoDBName": "neighborly-db",
+    "EventHubConnString": "Endpoint=sb://neighborly-namespace.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=37zZb6Jg/hv2rZ0AUTu6AAgIJU/yYN4L7sl3e+svi60="
+  },
+  "ConnectionStrings": {}
+}
+```
+### [Route custom events to Azure Event Hubs with Azure CLI and Event Grid](https://docs.microsoft.com/en-us/azure/event-grid/custom-event-to-eventhub)
+
+### Create a Custom Topic
+
+An event grid topic provides a user-defined endpoint that you post your events to. The following example creates the custom topic in your resource group. Replace <your-topic-name> with a unique name for your custom topic. The custom topic name must be unique because it's represented by a DNS entry.
 
 ```
 TOPICNAME=neighborly-topic
 RESOURCE_GROUP=neighborly-app-rg
-EVENT_HUBS_NAMESPACE=neighborly-event-hub
+REGION=westeurope
 
-az eventhubs namespace authorization-rule keys list --resource-group $RESOURCE_GROUP --namespace-name $EVENT_HUBS_NAMESPACE --name RootManageSharedAccessKey
 
-az eventhubs eventhub authorization-rule keys list --resource-group $RESOURCE_GROUP --namespace-name $EVENT_HUBS_NAMESPACE --eventhub-name $EVENT_HUBS_NAMESPACE --name RootManageSharedAccessKey
+az eventgrid topic create --name $TOPICNAME -l $REGION -g $RESOURCE_GROUP
+```
+
+In the end we are going to have an endpoint generated, like this one, which we will use for our POST request:
+
+```
+endpoint": "https://neighborly-topic.westeurope-1.eventgrid.azure.net/api/events
+```
+
+#### Create event hub
+
+Before subscribing to the custom topic, let's create the endpoint for the event message. You create an event hub for collecting the events.
+
+```
+NAMESPACE=neighborly-namespace
+HUBNAME=neighborly-hub
+RESOURCE_GROUP=neighborly-app-rg
+
+az eventhubs namespace create --name $NAMESPACE --resource-group $RESOURCE_GROUP
+
+az eventhubs eventhub create --name $HUBNAME --namespace-name $NAMESPACE --resource-group $RESOURCE_GROUP
+```
+
+After these commands collect the following:
+
+`serviceBusEndpoint": "https://neighborly-namespace.servicebus.windows.net:443/`
+#### Subscribe to a custom topic
+
+You subscribe to an **event grid topic** to tell **Event Grid** which events you want to track. The following example subscribes to the custom topic you created, and passes the resource ID of the **event hub** for the endpoint. The endpoint is in the format:
+
+`/subscriptions/<subscription-id>/resourceGroups/<resource-group-name>/providers/Microsoft.EventHub/namespaces/<namespace-name>/eventhubs/<hub-name>`
+
+The following script gets the resource ID for the **event hub**, and subscribes to an **event grid topic**. It sets the endpoint type to **eventhub** and uses the event hub ID for the endpoint.
+
+```
+HUBID=$(az eventhubs eventhub show --name $HUBNAME --namespace-name $NAMESPACE --resource-group $RESOURCE_GROUP --query id --output tsv)
+TOPICID=$(az eventgrid topic show --name $TOPICNAME -g $RESOURCE_GROUP --query id --output tsv)
+
+az eventgrid event-subscription create \
+  --source-resource-id $TOPICID \
+  --name subtoeventhub \
+  --endpoint-type eventhub \
+  --endpoint $HUBID
 ```
 ### Send an event to your custom topic
 
 Let's trigger an event to see how Event Grid distributes the message to your endpoint. First, let's get the URL and key for the custom topic.
 
 ```
-TOPICNAME=neighborly-topic
-RESOURCE_GROUP=neighborly-app-rg
-
 ENDPOINT=$(az eventgrid topic show --name $TOPICNAME -g $RESOURCE_GROUP --query "endpoint" --output tsv)
-
 KEY=$(az eventgrid topic key list --name $TOPICNAME -g $RESOURCE_GROUP --query "key1" --output tsv)
 ```
 
+In the end you would have something like this, where KEY is our `aeg-sas-key` key to put in the **header** of our POST request:
 
-To use an SAS token for authorization in Postman, configure authorization as follows:
+```
+ENDPOINT = https://neighborly-topic.westeurope-1.eventgrid.azure.net/api/events`
+KEY = KXCk4H/JZNoXVop3dvzmSuXMfboek1OrPNGju+JVz10=
+```
 
-Type: API Key
-Key: Authorization
-Value: SharedAccessSignature ...
-Add to: Header
+To simplify this article, you use sample event data to send to the custom topic. Typically, an application or Azure service would send the event data. CURL is a utility that sends HTTP requests. In this article, use CURL to send the event to the custom topic. The following example sends three events to the event grid topic:
 
-### What is the difference between event hub and event grid?
+```
+for i in 1 2 3
+do
+   EVENT='[ {"id": "'"$RANDOM"'", "eventType": "recordInserted", "subject": "myapp/vehicles/motorcycles", "eventTime": "'`date +%Y-%m-%dT%H:%M:%S%z`'", "data":{ "make": "Ducati", "model": "Monster"},"dataVersion": "1.0"} ]'
+   curl -X POST -H "aeg-sas-key: $KEY" -d "$EVENT" $ENDPOINT
+done
+```
 
-The noticeable difference between them is that **Event Hubs** are accepting only endpoints for the ingestion of data and they don't provide a mechanism for sending data back to publishers. On the other hand, **Event Grid** sends HTTP requests to notify events that happen in publishers. 
+#### Using POSTMAN to trigger an EvenHub Event
+
+Your URL should look like this:
+
+`https://neighborly-topic.westeurope-1.eventgrid.azure.net/api/events`
+
+Your body of POST request should look like this:
+
+```json
+[
+    {
+        "id": "1",
+        "eventType": "recordInserted",
+        "subject": "myapp/vehicles/motorcycles",
+        "eventTime": "2020-07-15T21:08:20+00:00",
+        "data": {
+            "make": "Ducati",
+            "model": "Monster"
+        },
+        "dataVersion": "1.0",
+        "metadataVersion": "1",
+        "topic": "/subscriptions/bb272072-9c6d-4e28-b814-947814c3e6ef/resourceGroups/neighborly-app-rg/providers/Microsoft.EventGrid/topics/neighborly-topic"
+    }
+]
+```
+
+your **header** should have:
+
+```
+key=aeg-sas-key
+value=KXCk4H/JZNoXVop3dvzmSuXMfboek1OrPNGju+JVz10=
+```
+
+
+### What is the difference between event hub and event grid? 
 
 https://medium.com/@sreeramg/what-is-microsoft-azure-event-hubs-1ec100452067
-
-https://dev.to/alexomeyer/10-must-have-vs-code-extensions-to-improve-your-productivity-4goe
-
-
-
 https://docs.microsoft.com/en-us/dotnet/api/microsoft.servicebus.messaging.eventdata?view=azure-dotnet
-
-
 https://docs.microsoft.com/en-us/azure/azure-functions/functions-bindings-event-hubs
 https://docs.microsoft.com/en-us/azure/azure-functions/functions-bindings-event-hubs-output
 https://docs.microsoft.com/en-us/azure/azure-functions/functions-reliable-event-processing
+
+#### Pipenv Useful Commands
+
+```
+pipenv shell
+pipenv install
+pipenv lock --pre --clear
+
+pipenv install sendgrid   
+pipenv install isort --dev
+pipenv install black --dev
+
+deactivate
+exit
+pipenv install sendgrid   
+pipenv uninstall numpy
+pipenv uninstall --all
+
+pipenv lock -r > requirements.txt  
+```
+
+##### Prettify your JSON in your web browser
+
+View json in a "prettier" way in Chrome or other web browser with a plugin: `JSON viewer`.
+

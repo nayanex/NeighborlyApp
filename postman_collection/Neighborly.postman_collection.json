@@ -1,0 +1,326 @@
+{
+	"info": {
+		"_postman_id": "9bf7048e-4b51-4389-81a4-37a0378819f8",
+		"name": "NeighborlyCollection",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "http://localhost:7071/api/deleteAdvertisement/?id=5ec34b2265403b17d00ae864",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:7071/api/deleteAdvertisement/?id=5ec34b2265403b17d00ae864",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "7071",
+					"path": [
+						"api",
+						"deleteAdvertisement",
+						""
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "5ec34b2265403b17d00ae864"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:7071/api/getAdvertisement/?id=5ec34b2265403b17d00ae864",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:7071/api/getAdvertisement/?id=5ec34b2265403b17d00ae864",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "7071",
+					"path": [
+						"api",
+						"getAdvertisement",
+						""
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "5ec34b2265403b17d00ae864"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:7071/api/getAdvertisements",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:7071/api/getAdvertisements",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "7071",
+					"path": [
+						"api",
+						"getAdvertisements"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:7071/api/getPost/?id=5ec34b2265403b17d00ae864",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:7071/api/getPost/?id=5ec34b2265403b17d00ae864",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "7071",
+					"path": [
+						"api",
+						"getPost",
+						""
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "5ec34b2265403b17d00ae864"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:7071/api/getPosts",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:7071/api/getPosts",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "7071",
+					"path": [
+						"api",
+						"getPosts"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:7071/api/updateAdvertisement/?id=5ec34b2265403b17d00ae864",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"title\": \"Air Conditionair POSTMAN!!!\",\n  \"description\": \"Air conditionair from POSTMAN cause it is damn hottie.\",\n  \"price\": \"$200.13\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:7071/api/updateAdvertisement/?id=5ec34b2265403b17d00ae864",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "7071",
+					"path": [
+						"api",
+						"updateAdvertisement",
+						""
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "5ec34b2265403b17d00ae864"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:7071/api/createAdvertisement",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"title\": \"[testaccount111] Honda Tacoma pick up - low milage.\",\n  \"description\": \"Manual transmission.  Great truck, clean title. Cash only.\",\n  \"price\": \"$3,587.05\",\n  \"city\": \"Poolsville\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:7071/api/createAdvertisement",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "7071",
+					"path": [
+						"api",
+						"createAdvertisement"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "https://neighborly-function-app.azurewebsites.net/api/deleteadvertisement?id=60d0bedede68f93568e73373",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "https://neighborly-function-app.azurewebsites.net/api/deleteadvertisement?id=60d0bedede68f93568e73373",
+					"protocol": "https",
+					"host": [
+						"neighborly-function-app",
+						"azurewebsites",
+						"net"
+					],
+					"path": [
+						"api",
+						"deleteadvertisement"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "60d0bedede68f93568e73373"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "https://neighborly-function-app.azurewebsites.net/api/createAdvertisement",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"title\": \"Innovative Bike\",\n    \"city\": \"Amsterdumb\",\n    \"description\": \"I bike that knows how to swim.\",\n    \"price\": \"$3,587.05\",\n    \"imgUrl\": \"https://ijep.com.br/img/artigos/artigo_820.png\",\n    \"email\": \"bike@mucholoko.com\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://neighborly-function-app.azurewebsites.net/api/createAdvertisement",
+					"protocol": "https",
+					"host": [
+						"neighborly-function-app",
+						"azurewebsites",
+						"net"
+					],
+					"path": [
+						"api",
+						"createAdvertisement"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "https://neighborly-function-app.azurewebsites.net/api/updateadvertisement?id=60d0c16f797a7899a7b60c47",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"title\": \"[this is a joke] Honda Tacoma pick up - low milage.\",\n    \"description\": \"Manual transmission. Great truck, clean title. Cash only.\",\n    \"price\": \"BTC 3,5\",\n    \"city\": \"CookiesVille\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://neighborly-function-app.azurewebsites.net/api/updateadvertisement?id=60d0c16f797a7899a7b60c47",
+					"protocol": "https",
+					"host": [
+						"neighborly-function-app",
+						"azurewebsites",
+						"net"
+					],
+					"path": [
+						"api",
+						"updateadvertisement"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "60d0c16f797a7899a7b60c47"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "https://neighborly-topic.westeurope-1.eventgrid.azure.net/api/events",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "aeg-sas-key",
+						"value": "KXCk4H/JZNoXVop3dvzmSuXMfboek1OrPNGju+JVz10=",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "[\n    {\n        \"id\": \"1\",\n        \"eventType\": \"recordInserted\",\n        \"subject\": \"myapp/vehicles/motorcycles\",\n        \"eventTime\": \"2020-07-15T21:08:20+00:00\",\n        \"data\": {\n            \"make\": \"Ducati\",\n            \"model\": \"Monster\"\n        },\n        \"dataVersion\": \"1.0\",\n        \"metadataVersion\": \"1\",\n        \"topic\": \"/subscriptions/bb272072-9c6d-4e28-b814-947814c3e6ef/resourceGroups/neighborly-app-rg/providers/Microsoft.EventGrid/topics/neighborly-topic\"\n    }\n]",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://neighborly-topic.westeurope-1.eventgrid.azure.net/api/events",
+					"protocol": "https",
+					"host": [
+						"neighborly-topic",
+						"westeurope-1",
+						"eventgrid",
+						"azure",
+						"net"
+					],
+					"path": [
+						"api",
+						"events"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

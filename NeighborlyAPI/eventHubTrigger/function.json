@@ -5,8 +5,8 @@
       "type": "eventHubTrigger",
       "name": "event",
       "direction": "in",
-      "eventHubName": "neighborly-event-hub",
-      "AzureEventHubConnectionString": "Endpoint=sb://neighborly-event-hub.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=c+VVkMStrYIKlHvPEs5ElHSaKOvOLwdbqH64sz4Ybi8="
+      "eventHubName": "neighborly-hub",
+      "connection": "EventHubConnString"
     }
   ]
 }
