@@ -449,8 +449,9 @@ Once deployed, the flask app will be available at the URL `http://<APP_NAME>.azu
 > The Core Tools will leverage the docker CLI to build and publish the image. Be sure to have docker installed already and connected to your account with docker login.
 
 ```
+REGISTRY_SERVER=neighborlyregistry.azurecr.io
 REGISTRY=neighborlyRegistry
-docker login $REGISTRY
+docker login $REGISTRY_SERVER
 ```
 
 > To create an image from Docker file use the below commands, in which we also tag our image
@@ -747,4 +748,13 @@ pipenv lock -r > requirements.txt
 ##### Prettify your JSON in your web browser
 
 View json in a "prettier" way in Chrome or other web browser with a plugin: `JSON viewer`.
+
+
+#### Other Resources about Azure Event Hub
+
+https://github.com/yokawasa/azure-functions-python-samples/blob/master/v1functions/eventhub-trigger-table-out-bindings/README.md
+https://pypi.org/project/azure-eventhub/#publish-events-to-an-event-hub
+https://docs.microsoft.com/en-us/rest/api/eventhub/send-event
+https://docs.microsoft.com/en-us/azure/event-hubs/event-hubs-python-get-started-send
+
 
